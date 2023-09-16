@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+  
+  <script th:src="@{/js/fragments/header.js}"></script>
+  <header th:fragment="headerFragment">
+	  <div id="headerInner">
+	    <img th:src="@{/images/logo.svg}" id="logo"  onclick="location.href='/home'" />
+	    
+	    <ul id="gnb">
+	    	<li><a href="/market/view">마켓관리</a></li>
+	      <li><a href="/lookup/goodsList">식물조회</a></li>
+	      <li><a href="/lookup/shareThingList">물품대여</a></li>
+	      <li><a href="/member/mypage">마이페이지</a></li>
+	      
+	      <li>
+	        <div id="basketIconWrap" onclick="location.href='/cart/cartList'">
+	        	<th:block th:if="${session.cartItemCnt == null}">
+	        		<img th:src="@{/images/cartIcon.svg}" id="cartNullIcon" />
+	        	</th:block>
+	        	<th:block th:unless="${session.cartItemCnt == null}">
+	        		<img th:src="@{/images/basketIcon.svg}" />
+	          	<div id="basketCnt" th:text="${session.cartItemCnt}"></div>
+	          </th:block>
+	        </div>
+	      </li>
+	      
+	      <li>
+	        <div id="alertIconWrap"  onclick="window.open('/lookup/alertList', 'alert', 'width=460; height=260; left=Math.ceil(( window.screen.width - _width )/2); top=Math.ceil(( window.screen.height - _height )/2); resizable = no;')">
+	        	<th:block th:if="${session.alertCnt} == 0 or ${session.alertCnt == null}">
+	        	  <img th:src="@{/images/nullAlertBtn.svg}" id="alertNullIcon" />
+	          </th:block>
+	          <th:block th:unless="${session.alertCnt} == 0 or ${session.alertCnt == null}">
+	            <img th:src="@{/images/alertIcon.svg}" />
+	          	<div id="alertCnt" th:text="${session.alertCnt}"></div>
+	          </th:block>
+	        </div>
+	      </li>
+	      
+	      <li>
+	      	<button th:if="${session.id == null}" id="loginBtn" onclick="location.href='/member/login'">sign in</button>
+	      	<button th:if="${session.id != null}" id="loginBtn" onclick="location.href='/member/logout'">sign out</button>
+	      </li>
+	    </ul>
+	  </div>
+	</header>
+</html>

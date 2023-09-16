@@ -1,0 +1,62 @@
+#loginWrap {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login-tit {
+	margin-bottom: 60px;
+	font-size: 48px;
+	font-family: 'Russo One', sans-serif;
+	color: #93c0b5;
+	cursor: pointer;
+}
+
+#loginId,
+#loginPwd {
+  padding: 0px 20px;
+  width: 380px;
+  height: 44px;
+  border-radius: 5px;
+  font-size: 14px;
+  border: 1px solid #ECECEC;;
+  background-color: #FAFAFA;
+}
+
+#loginId:focus,
+#loginPwd:focus {
+  outline-color: #93c0b5;
+}
+
+#loginBtn {
+	margin: 10px 0px 50px 0px;
+  width: 420px;
+  height: 44px;
+  border-radius: 5px;
+  background-color: #93c0b5;
+  font-size: 18px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+#askJoin {
+	width: 400px;
+  font-size: 12px;
+  color: #535353;
+}
+
+#askJoin > a {
+  margin-left: 14px;
+  color: #93c0b5;
+  cursor: pointer;
+}
+
+.invalid-feedback {
+	margin: -10px 0px 10px 0px;
+	width: 400px;
+  font-size: 14px;
+	color: #DF5375;
+}

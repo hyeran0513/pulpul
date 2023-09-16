@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dongduk.cs.pulpul.dao.mybatis.mapper.ItemMapper">
+
+	<!--  ====================================================================  -->
+	<!--  품목 관련 질의문  -->
+	<!--  ====================================================================  -->
+
+	<!-- 품목 이미지(들) 저장 -->
+	<insert id="insertItemImages" parameterType="java.util.Map">
+    	<foreach collection="imageUrlList" item="imageUrl" index="index"  open="INSERT ALL " separator=" " close="SELECT * FROM DUAL" >
+	    	INTO image (image_src, member_id, category_id)
+	    	VALUES (#{imageUrl}, #{memberId}, 'IIMG')
+		</foreach>
+	</insert>
+	
+	<!-- 품목 이미지(들) 삭제 -->
+	<delete id="deleteItemImages" parameterType="string"> 
+		DELETE FROM image
+		WHERE member_id = #{memberId} AND INSTR(image_src, #{itemId}) <![CDATA[>]]> 0
+	</delete>
+	
+	<!-- 품목 정보 수정 -->
+	<update id="updateItem" parameterType="Item">
+		UPDATE item
+		SET name = #{name}, description = #{description}, open_status = #{openStatus}
+		WHERE item_id = #{id}
+	</update>
+	
+	<!-- 품목 삭제 -->
+	<delete id="deleteItem" parameterType="string">
+		DELETE FROM item
+		WHERE item_id = #{itemId}
+	</delete>
+	
+	
+	<!--  ====================================================================  -->
+	<!--  품목-상품 관련 질의문  -->
+	<!--  ====================================================================  -->
+	
+	<!-- 모든 상품 목록 조회 -->
+	<select id="selectAllGoods" resultType="Goods">
+		SELECT item_id AS "item.id", it.name AS "item.name",
+			g.tags, g.price, g.sales_quantity AS salesQuantity, g.remain_quantity AS remainQuantity, g.shipping_fee AS shippingFee,
+			i.image_src AS "item.thumbnailUrl"
+		FROM item it
+			JOIN market m USING (market_id)
+			JOIN goods g USING (item_id)
+			JOIN image i USING (member_id)
+		WHERE market_id IS NOT NULL AND m.open_status ='1' AND it.open_status = 1 
+			AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+		ORDER BY dbms_random.value
+	</select>
+	
+	<!-- 회원 id로 상품 목록 조회 -->
+	<select id="selectGoodsByMemberId" parameterType="string" resultType="Goods">
+		SELECT item_id AS "item.id", it.name AS "item.name", it.open_status AS "item.openStatus",
+			g.price, g.sales_quantity AS salesQuantity, g.remain_quantity AS remainQuantity, g.shipping_fee AS shippingFee,
+			i.image_src AS "item.thumbnailUrl"
+		FROM item it
+			JOIN market m USING (market_id)
+			JOIN goods g USING (item_id)
+			JOIN image i USING (member_id)
+		WHERE member_id = #{memberId} AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+	</select>
+	
+	<!-- 마켓 id로 상품 목록 조회 -->
+	<select id="selectGoodsByMarketId" parameterType="int" resultType="Goods">
+		SELECT item_id AS "item.id", it.name AS "item.name",
+			g.tags, g.price, g.sales_quantity AS salesQuantity, g.remain_quantity AS remainQuantity, g.shipping_fee AS shippingFee,
+			i.image_src AS "item.thumbnailUrl"
+		FROM item it
+			JOIN market m USING (market_id)
+			JOIN goods g USING (item_id)
+			JOIN image i USING (member_id)
+		WHERE it.open_status = 1 AND market_id = #{marketId} AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+		ORDER BY dbms_random.value
+	</select>
+	
+	<!-- 새 상품 목록 조회(3개) -->
+  <select id="selectNewGoods" resultType="Goods">
+     SELECT item_id AS "item.id", name AS "item.name", 
+        price, remain_quantity AS remainQuantity,
+        image_src AS "item.thumbnailUrl"
+     FROM (SELECT item_id, item.name, price, remain_quantity, image_src
+           FROM item JOIN market USING (market_id) JOIN goods USING (item_id) JOIN image USING (member_id)
+           WHERE item.open_status = 1 AND market_id IS NOT NULL AND (INSTR(image_src, item_id || '-1') <![CDATA[>]]> 0)
+           ORDER BY upload_date DESC)
+     WHERE ROWNUM <![CDATA[<=]]> 3
+  </select>
+
+	<!-- 상품 상세정보 조회 -->
+	<resultMap id="GoodsInfoMap" type="Goods">
+		<result column="tags" jdbcType="VARCHAR" property="tags" javaType="string" />
+		<result column="price" jdbcType="INTEGER" property="price" javaType="int" />
+		<result column="goods_size" jdbcType="VARCHAR" property="size" javaType="string" />
+		<result column="sales_quantity" jdbcType="INTEGER" property="salesQuantity" javaType="int" />
+		<result column="remain_quantity" jdbcType="INTEGER" property="remainQuantity" javaType="int" />
+		<result column="shipping_fee" jdbcType="INTEGER" property="shippingFee" javaType="int" />
+		<association property="item" column="item_id" javaType="Item">
+			<id column="item_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			<result column="item_name" jdbcType="VARCHAR" property="name" javaType="string" />
+			<result column="upload_date" jdbcType="DATE" property="uploadDate" javaType="string" />
+			<result column="description" jdbcType="VARCHAR" property="description" javaType="string" />
+			<result column="open_status" jdbcType="INTEGER" property="openStatus" javaType="int" />
+			<association property="market" column="market_id" javaType="Market">
+				<id column="market_id" jdbcType="INTEGER" property="id" javaType="int" />
+				<result column="market_name" jdbcType="VARCHAR" property="name" javaType="string" />
+				<association property="member" column="member_id" javaType="Member">
+					<id column="member_id" jdbcType="VARCHAR" property="id" javaType="string" />
+				</association>
+			</association>
+			<collection property="imageUrlList" ofType="string" javaType="java.util.List">
+        <result column="image_src" />
+    	</collection>
+		</association>
+	</resultMap>
+	
+	<select id="selectGoodsByItemId" parameterType="string" resultMap="GoodsInfoMap">
+		SELECT item_id, it.name AS item_name, it.upload_date, it.description, it.open_status, market_id,
+			m.name AS market_name,
+			g.tags, g.price, g.goods_size, g.sales_quantity, g.remain_quantity, g.shipping_fee,
+			member_id, i.image_src
+		FROM item it
+			FULL OUTER JOIN goods g USING (item_id)
+			FULL OUTER JOIN market m USING (market_id)
+			FULL OUTER JOIN image i USING (member_id)
+		WHERE item_id = #{item_id} AND INSTR(i.image_src, item_id) <![CDATA[>]]> 0
+		ORDER BY image_src ASC
+	</select>
+	
+	<!-- 상품 id로 남은 수량 조회 -->
+	<select id="selectRemainQuantityByGoodsId" parameterType="string" resultType="string">
+		SELECT remain_quantity
+		FROM goods
+		WHERE item_id = #{item_id}
+	</select>
+	
+	<!-- 상품 생성 --> 
+	<insert id="insertGoods" parameterType="Goods">
+		<selectKey keyProperty="item.id" resultType="string" order="BEFORE">SELECT ('G' || item_seq.NEXTVAL) FROM DUAL</selectKey>
+		INSERT ALL 
+			INTO item (item_id, name, upload_date, description, open_status, market_id)
+			VALUES (#{item.id}, #{item.name}, SYSDATE, #{item.description}, #{item.openStatus}, 
+				(SELECT market_id FROM market JOIN member USING (member_id) WHERE member_id = #{item.market.member.id}))
+			INTO goods (item_id, tags, price, shipping_fee, goods_size, sales_quantity, remain_quantity) 
+			VALUES (#{item.id}, #{tags}, #{price}, #{shippingFee}, #{size}, #{salesQuantity}, #{salesQuantity}) 
+		SELECT * FROM DUAL
+	</insert>
+	
+	<!-- 상품 정보 수정 -->
+	<update id="updateGoods" parameterType="Goods">
+		UPDATE goods
+		SET tags = #{tags}, price = #{price}, shipping_fee = #{shippingFee}, goods_size = #{size}, remain_quantity = #{remainQuantity}
+		WHERE item_id = #{item.id}
+	</update>
+	
+	<!-- 상품 남은 수량 변경 -->
+	<update id="updateRemainQuantity">
+		UPDATE goods
+		<set>
+			<if test='orderStatus eq 1'>
+				remain_quantity = remain_quantity - #{quantity}
+			</if>
+			<if test='orderStatus eq 0'>
+				remain_quantity = remain_quantity + #{quantity}
+			</if>
+		</set>
+		WHERE item_id = #{itemId}
+	</update>
+	
+	<!-- 상품에 대해 판매내역이 있는지 확인 -->
+	<select id="selectOrderCountByItemId" parameterType="string" resultType="int">
+		SELECT COUNT(order_id)
+		FROM item it
+			JOIN order_goods og ON it.item_id = og.goods_id 
+		WHERE it.item_id = #{item_id}
+	</select>
+
+	
+	<!--  ====================================================================  -->
+	<!--  품목-공유물품 관련 질의문  -->
+	<!--  ====================================================================  -->
+	
+	<!-- 모든 공유물품 목록 조회 -->
+	<select id="selectAllShareThing" resultType="ShareThing">
+		SELECT item_id AS "item.id", it.name AS "item.name", it.open_status AS "item.openStatus", 
+			market_id AS "item.market.id", m.name AS "item.market.name",
+			s.is_borrowed AS isBorrowed,
+			member_id AS "item.market.member.id", i.image_src AS "item.thumbnailUrl",
+			address AS "item.market.member.address"
+		FROM item it
+			JOIN share_thing s USING (item_id)
+			JOIN market m USING (market_id)
+			JOIN image i USING (member_id)
+			JOIN member mem USING (member_id)
+		WHERE it.open_status = 1 AND market_id IS NOT NULL AND m.open_status = '1'
+			AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+	</select>
+	
+	<!-- 회원 id로 공유물품 목록 조회 -->
+	<select id="selectShareThingByMemberId" parameterType="string" resultType="ShareThing">
+		SELECT item_id AS "item.id", it.name AS "item.name", it.open_status AS "item.openStatus", 
+			market_id AS "item.market.id", m.name AS "item.market.name",
+			s.is_borrowed AS isBorrowed,
+			member_id AS "item.market.member.id", i.image_src AS "item.thumbnailUrl",
+			address AS "item.market.member.address"
+		FROM item it
+			JOIN share_thing s USING (item_id)
+			JOIN market m USING (market_id)
+			JOIN image i USING (member_id)
+			JOIN member mem USING (member_id)
+		WHERE member_id = #{memberId} AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+	</select>
+
+	<!-- 마켓 id로 공유물품 목록 조회 -->
+	<select id="selectShareThingByMarketId" parameterType="int" resultType="ShareThing">
+		SELECT item_id AS "item.id", it.name AS "item.name", it.open_status AS "item.openStatus", 
+			market_id AS "item.market.id", m.name AS "item.market.name",
+			s.is_borrowed AS isBorrowed,
+			member_id AS "item.market.member.id", i.image_src AS "item.thumbnailUrl"
+		FROM item it
+			JOIN share_thing s USING (item_id)
+			JOIN market m USING (market_id)
+			JOIN image i USING (member_id)
+		WHERE it.open_status = 1 AND market_id = #{marketId} AND INSTR(i.image_src, item_id || '-1') <![CDATA[>]]> 0
+	</select>
+	
+	<!-- 공유물품 상세정보 조회 -->
+	<resultMap id="ShareThingInfoMap" type="ShareThing">
+		<result column="precaution" jdbcType="VARCHAR" property="precaution" javaType="string" />
+		<result column="is_borrowed" jdbcType="INTEGER" property="isBorrowed" javaType="int" />
+		<association property="item" column="item_id" javaType="Item">
+			<id column="item_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			<result column="item_name" jdbcType="VARCHAR" property="name" javaType="string" />
+			<result column="upload_date" jdbcType="DATE" property="uploadDate" javaType="string" />
+			<result column="description" jdbcType="VARCHAR" property="description" javaType="string" />
+			<result column="open_status" jdbcType="INTEGER" property="openStatus" javaType="int" />
+			<association property="market" column="market_id" javaType="Market">
+				<id column="market_id" jdbcType="INTEGER" property="id" javaType="int" />
+				<result column="market_name" jdbcType="VARCHAR" property="name" javaType="string" />
+				<association property="member" column="member_id" javaType="Member">
+					<id column="member_id" jdbcType="VARCHAR" property="id" javaType="string" />
+					<result column="address" jdbcType="VARCHAR" property="address" javaType="string" />
+				</association>
+			</association>
+			<collection property="imageUrlList" ofType="string" javaType="java.util.List">
+        <result column="image_src" />
+    	</collection>
+		</association>
+	</resultMap>
+	
+	<select id="selectShareThingByItem" parameterType="string" resultMap="ShareThingInfoMap">
+		SELECT item_id, it.name AS item_name, it.upload_date, it.description, it.open_status, 
+			market_id, m.name AS market_name,
+			s.precaution, s.is_borrowed,
+			member_id, i.image_src, address
+		FROM item it
+			FULL OUTER JOIN share_thing s USING (item_id)
+			FULL OUTER JOIN market m USING (market_id)
+			FULL OUTER JOIN image i USING (member_id)
+			FULL OUTER JOIN member mem USING (member_id)
+		WHERE item_id = #{item_id} AND INSTR(i.image_src, item_id) <![CDATA[>]]> 0
+	</select>
+
+	<!-- 공유물품 생성 --> 
+	<insert id="insertShareThing" parameterType="ShareThing">
+		<selectKey keyProperty="item.id" resultType="string" order="BEFORE">SELECT ('S' || item_seq.NEXTVAL) FROM DUAL</selectKey>
+		INSERT ALL 
+			INTO item (item_id, name, upload_date, description, open_status, market_id)
+			VALUES (#{item.id}, #{item.name}, SYSDATE, #{item.description}, #{item.openStatus}, 
+				(SELECT market_id FROM market JOIN member USING (member_id) WHERE member_id = #{item.market.member.id}))
+			INTO share_thing (item_id, precaution) 
+			VALUES (#{item.id}, #{precaution})
+		SELECT * FROM DUAL
+	</insert>
+	
+	<!-- 공유물품 정보 수정 -->
+	<update id="updateShareThing" parameterType="ShareThing">
+		UPDATE share_thing
+		SET precaution = #{precaution}
+	</update>
+	
+	<!-- 공유 물품 대여 여부 변경 -->
+	<update id="updateIsBorrowed" parameterType="ShareThing">
+		UPDATE share_thing
+		SET is_borrowed = #{isBorrowed}
+		WHERE item_id = #{item.id}
+	</update>
+	
+	<!-- 공유물품에 대해 대여내역이 있는지 확인 -->
+	<select id="selectBorrowCountByItemId" parameterType="string" resultType="int">
+		SELECT COUNT(borrow_id)
+		FROM item it
+			JOIN borrow b ON it.item_id = b.share_thing_id 
+		WHERE it.item_id = #{item_id}
+	</select>
+	
+</mapper>

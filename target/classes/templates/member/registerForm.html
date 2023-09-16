@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+  <th:block layout:fragment="css">
+  	<link rel="stylesheet" th:href="@{/css/member/registerForm.css}" >
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+	  		console.log('데이터 확인');
+	  		var member = [[${member}]];
+			console.log(member);
+		</script>
+		<form action="/member/register" method="post" th:object="${member}">
+		<div id="joinPageWrap">
+		  <div id="joinText">
+		    <div id="joinTit">회원가입</div>
+		    <div id="joinSubTit">회원정보를 입력하세요.</div>
+		  </div>
+		  <table>
+		    <tr>
+		      <td class="text-name">아이디<span>*</span></td>
+		      <td class="inputWrap">
+		      	<input type="text" placeholder="아이디" name="id" th:value="${member.id}" />
+		      	<div class="invalid-feedback" th:errors="*{id}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">비밀번호<span>*</span></td>
+		      <td class="inputWrap">
+		      	<input type="password" placeholder="비밀번호" name="password" th:value="${member.password}" />
+		      	<div class="invalid-feedback" th:errors="*{password}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">비밀번호 확인<span>*</span></td>
+		      <td class="inputWrap">
+		      	<input type="password" placeholder="비밀번호 확인" name="passwordCheck" th:value="${member.passwordCheck}" />
+		      	<div class="invalid-feedback" th:errors="*{passwordCheck}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">이름<span>*</span></td>
+		      <td class="inputWrap">
+		      	<input type="text" placeholder="이름" name="name" th:value="${member.name}" />
+		      	<div class="invalid-feedback" th:errors="*{name}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">생년월일<span>*</span></td>
+		      <td class="inputWrap">
+		        <input type="text" placeholder="생년월일 (8자리로 입력해주세요.)" name="birth" th:value="${member.birth}"/>
+		        <div class="invalid-feedback" th:errors="*{birth}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">이메일<span>*</span></td>
+		      <td class="inputWrap">
+		      	<input type="text" placeholder="이메일" name="email" th:value="${member.email}" />
+		      	<div class="invalid-feedback" th:errors="*{email}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">연락처<span>*</span></td>
+		      <td class="inputWrap">
+		        <input type="text" placeholder="연락처 (숫자만 입력해주세요.)" name="phone" th:value="${member.phone}" />
+		        <div class="invalid-feedback" th:errors="*{phone}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">주소<span>*</span></td>
+		      <td>
+		        <div id="addressText">
+			        <div class="inputWrap">
+			          <input type="text" placeholder="우편번호" name="zip" th:value="${member.zip}" />
+			          <div class="invalid-feedback" th:errors="*{zip}"></div>
+			        </div>
+			        <div class="inputWrap">
+		          	<input type="text" placeholder="주소" name="address" th:value="${member.address}"/>
+		          	<div class="invalid-feedback" th:errors="*{address}"></div>
+		          </div>
+		          <div class="inputWrap">
+		          	<input type="text" placeholder="상세주소" name="addressDetail" th:value="${member.addressDetail}" />
+		          	<div class="invalid-feedback" th:errors="*{addressDetail}"></div>
+		          </div>
+		        </div>
+		      </td>
+		    </tr>
+		  </table>
+	      
+		  <div id="btnWrap">
+		    <button id="joinCancelBtn"  type="button" onclick="location.href='/member/login'">회원가입 취소</button>
+		    <button id="joinBtn" type="submit">회원가입</button>
+		  </div>
+		</div>
+		</form>
+	</div>
+</html>

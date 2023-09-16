@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/market/shareThingBorrowList.css}" >
+  </th:block>
+  
+   <th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  	<script th:src="@{/js/encodeUri/uri.js}"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+			console.log('borrowList 확인');
+			var borrowList = [[${borrowList}]];
+			console.log(borrowList);
+		</script>
+		<div id="pageWrap">
+      <div id="pageTit">공유 물품 관리</div>
+      <div id="pageSubTit">공유 물품 대여 현황</div>
+      
+      <div id="menu">
+		    <div><a href="/market/view" class="list">마켓 정보</a></div>
+		    <div>|</div>
+		    <div><a href="/market/goods/list" class="list">상품 관리</a></div>
+		    <div>|</div>
+		    <div><a href="/market/shareThing/list" class="list-on">공유 물품 관리</a></div>
+		  </div>
+
+      <table>
+        <tr>
+          <th class="sharething-img"></th>
+          <th class="sharething-name">공유 물품명</th>
+          <th class="sharething-lender">대여자</th>
+          <th class="phone">연락처</th>
+          <th class="rental-period">대여 기간</th>
+          <th class="sharething-return"></th>
+        </tr>
+
+       <tr th:each="borrow : ${borrowList.pageList}">
+          <td><img th:src=${borrow.shareThing.item.thumbnailUrl} class="img-size" /></td>
+          <td th:text=${borrow.shareThing.item.name}></td>
+          <td th:text=${borrow.borrower.name}></td>
+          <td th:text="${#strings.substring(borrow.borrower.phone, 0, 3) + '-' + 
+          #strings.substring(borrow.borrower.phone, 3, 7) + '-' + #strings.substring(borrow.borrower.phone, 7)}"></td>
+          <td><th:block th:text=${borrow.borrowDate}></th:block> ~ <th:block th:text=${borrow.returnDate}></th:block></td>
+          <td>
+          	<button class="rental-btn" th:onclick="returnShareThing([[${borrow.id}]])" th:if="${borrow.borrowStatus} == 1">반납</button>
+          	<button class="not-rental-btn" th:unless="${borrow.borrowStatus} == 1" disabled>반납</button>
+          </td>
+        </tr>
+      </table>
+      
+      <div th:if="${!borrowList.firstPage}">
+      	<button id="returnBtn" th:onclick="'location.href=\''+ @{/market/shareThing/borrowList/{pageType}(pageType=previous)} + '\''">이전으로</button>
+      </div>
+      <div th:if="${!borrowList.lastPage}">
+      	<button id="returnBtn" th:onclick="'location.href=\''+ @{/market/shareThing/borrowList/{pageType}(pageType=next)} + '\''">다음으로</button>
+      </div>
+      <button id="returnBtn" onclick="location.href='/market/shareThing/list'">뒤로 가기</button>
+    </div>
+	</div>
+</html>

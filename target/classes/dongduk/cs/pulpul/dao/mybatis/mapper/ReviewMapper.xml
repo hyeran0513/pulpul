@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dongduk.cs.pulpul.dao.mybatis.mapper.ReviewMapper">
+
+	<!-- 리뷰 정보 조회 -->
+	<resultMap id="ReviewInfoMap" type="Review">
+		<id column="review_id" jdbcType="INTEGER" property="id" javaType="int" />
+		<result column="write_date" jdbcType="VARCHAR" property="writeDate" javaType="string" />
+		<result column="content" jdbcType="VARCHAR" property="content" javaType="string" />
+		<result column="rating" jdbcType="INTEGER" property="rating" javaType="int" />
+		<association property="order" column="order_id" javaType="Order">
+			<id column="order_id" jdbcType="INTEGER" property="id" javaType="int" />
+			<association property="buyer" column="buyer_id" javaType="Member">
+				<id column="buyer_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			</association>
+		</association>
+		<association property="item" column="item_id" javaType="Item">
+			<id column="id" jdbcType="INTEGER" property="id" javaType="int" />
+		</association>
+	</resultMap>
+
+	<select id="selectReviewByItem" parameterType="string" resultMap="ReviewInfoMap">
+	    SELECT review_id, write_date, content, rating, r.item_id, r.order_id,
+	    	o.buyer_id
+	    FROM review r 
+	    	JOIN orders o ON r.order_id = o.order_id
+	    WHERE r.item_id = #{itemId}
+	</select>
+	
+	<!-- 리뷰 이미지 조회 -->
+	<select id="selectReviewImage" parameterType="int" resultType="string">
+	    SELECT image_src
+	    FROM image
+	    WHERE category_id = 'RIMG' AND INSTR(image_src, TO_CHAR(#{reviewId})) <![CDATA[>]]> 0
+	</select>
+	
+	<!-- 리뷰할 주문id 1개 반환 -->
+	<select id="selectOrderIdByNotReview" parameterType="string" resultType="string">
+    SELECT order_id
+		FROM orders
+    	JOIN order_goods USING (order_id)
+		WHERE order_status = 3 AND goods_id = #{itemId} AND buyer_id = #{memberId}
+    	AND (order_id, goods_id) NOT IN (SELECT order_id, item_id AS goods_id FROM review) AND ROWNUM <![CDATA[<=]]> 1
+	</select>
+	
+	<!-- 주문id와 상품 id에 대한 리뷰 수 반환 -->
+	<select id="selectReviewCountByItemId" resultType="int">
+    SELECT COUNT(*)
+		FROM review
+		WHERE item_id = #{itemId} AND order_id = #{orderId}
+	</select>
+	
+	<!-- 리뷰 생성 -->
+	<insert id="insertReview" parameterType="Review">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">SELECT review_seq.NEXTVAL FROM DUAL</selectKey>
+    INSERT INTO review (review_id, write_date, content, rating, order_id, item_id)
+    VALUES (#{id}, SYSDATE, #{content}, #{rating}, #{order.id}, #{item.id})
+	</insert>
+	
+	<!-- 리뷰 이미지 저장 -->
+	<insert id="insertReviewImage" parameterType="Review">
+    INSERT INTO image (image_src, member_id, category_id)
+    VALUES (#{imageUrl}, #{order.buyer.id}, 'RIMG')
+	</insert>
+
+</mapper>

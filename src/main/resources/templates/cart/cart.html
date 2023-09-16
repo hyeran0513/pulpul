@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/cart/cart.css}" >
+  </th:block>
+
+	<div layout:fragment="content">
+	<script th:inline="javascript">
+  		console.log('데이터 확인');
+  		var cart = [[${cart}]];
+  		console.log(cart);
+    </script>
+	 <div id="pageWrap">
+	 		<th:block th:unless="${cart == null}">
+      	<div id="pageTit">장바구니</div>
+      	<div id="pageSubTit">Shopping bag</div>
+      </th:block>
+      
+      <div class="noCartItem" th:if="${cart == null}">
+      	<div class="noCartItemTit">장바구니가 비어있어요</div>
+      	<div class="noCartItemSubTit">새로운 상품을 담아주세요</div>
+       	<div class="bottom-btn-wrap">
+      		<button class="goto-shopping" onclick="location.href='/lookup/goodsList'">쇼핑 하러가기</button>
+       	</div>
+      </div>
+      
+      <form method="get" action="/order/purchase">
+      <div th:each="cartItem : ${cart?.cartItemList}">
+      <div th:text="${cartItem.goods.item.market.name}" class="market-name"></div>
+      <table>
+        <tr>
+          <th class="check-box"></th>
+          <th class="thumbnail-img"></th>
+          <th class="item-info">상품 정보</th>
+          <th class="item-num">수량</th>
+          <th class="price">단품 가격</th>
+          <th class="shipping">배송비</th>
+          <th class="btn-wrap"></th>
+        </tr>
+        
+        <tr class="cartItem-wrap" 
+          th:style="${cartItem.goods.remainQuantity == 0}
+             or ${cartItem.goods.item.openStatus == 0} 
+             or ${cartItem.goods.item.market.openStatus == '0'} ? 'color:#c4c4c4': ''">
+          <td class="check-box">
+            <input type="checkbox" name="orderGoods" th:value="${cartItem.goods.item.id}" 
+               th:disabled="${cartItem.goods.remainQuantity == 0} 
+                or ${cartItem.goods.item.openStatus == 0} 
+                or ${cartItem.goods.item.market.openStatus == '0'} ? 'true': 'false'"
+             />
+          </td>
+          <td>
+            <div class="thumbnail-item">
+	           <img 
+	           th:class="${(cartItem.goods.remainQuantity == 0 ? 'soldout' : 'thumbnail-item-img') + 
+	           (cartItem.goods.item.openStatus == 0 ? ' close' : '') + 
+	           (cartItem.goods.item.market.openStatus == '0' ? ' close' : '')}"
+	             th:src="${cartItem.goods.item.thumbnailUrl}"
+	             th:onclick="moveToGoods([[${cartItem.goods.item.id}]],
+	              [[${cartItem.goods.item.openStatus}]],
+	              [[${#strings.equals(cartItem.goods.item.market.openStatus, '0')}]])"
+	             />
+	        </div>
+          </td>
+          <td class="item-info" th:text="${cartItem.goods.item.name}"></td>
+          <td class="item-num"  th:text="${cartItem.quantity}"></td>
+          <td class="price" th:text="${cartItem.goods.price}"></td>
+          <td class="shipping" th:text="${cartItem.goods.shippingFee}"></td>
+          <td class="btn-wrap"><button type="button" class="cancel-btn" th:onclick="deleteItem([[${cartItem.goods.item.id}]])">삭제</button></td>
+        </tr>
+
+      </table>
+      
+      <div class="total-price-wrap">
+        <div class="total-price-tit">총 상품 금액
+         <span class="total-price-item">0</span>
+        </div>
+        <div class="total-price-tit">+</div>
+        <div class="total-price-tit">배송비
+         <span class="total-shipping">0</span>
+        </div>
+        <div class="total-price-tit">=</div>
+        <div class="total-price-tit">총 결제 금액
+         <span class="total-price">0</span>
+        </div>
+      </div>
+
+      <div class="bottom-btn-wrap">
+      	<button type="button" class="continue-shopping" onclick="location.href='/lookup/goodsList'">쇼핑 계속하기</button>
+        <button class="check-item-order">선택 상품 주문</button>
+        <button type="button" class="all-item-delete" th:onclick="deleteItemByMarket([[${cartItem.goods.item.market.id}]])">전체 항목 삭제</button>
+      </div>
+      </div>
+    	</form>
+    </div>
+    <th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script th:src="@{/js/cart/cart.js}"></script>
+    <script th:src="@{/js/encodeUri/uri.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </th:block>
+	</div>
+</html>

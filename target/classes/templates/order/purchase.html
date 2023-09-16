@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/order/purchase.css}" >
+  </th:block>
+
+ <th:block layout:fragment="script">
+  	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  	<script th:src="@{/js/order/purchase.js}" defer></script>
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </th:block>
+  
+	<div layout:fragment="content">
+	<!-- <script th:inline="javascript">
+  		console.log('데이터 확인');
+  		var order = [[${order}]];
+  		console.log(order);
+   </script> -->
+   <form method="post" action="/order/purchase" th:object="${order}">
+		<div id="pageWrap">
+      <div id="pageTit">결제화면</div>
+      <div id="pageSubTit">Payment</div>
+      
+      <div id="tableWrap">
+        <table>
+          <tr>
+            <th class="item-img-wrap"></th>
+            <th class="item-info">상품 정보</th>
+            <th class="item-num">수량</th>
+            <th class="price">판매 가격</th>
+            <th class="shipping">배송비</th>
+            <th class="seller">판매자</th>
+          </tr>
+          
+          <tr th:each="goodsList : ${order.goodsList}">
+            <td class="item-img-wrap">
+              <img th:src="${goodsList.goods.item.thumbnailUrl}" class="item-img" />
+            </td>
+            <td class="item-info" th:text="${goodsList.goods.item.name}"></td>
+            <td class="item-num" th:text="${goodsList.quantity}"></td>
+            <td class="price" th:text="${goodsList.goods.price}"></td>
+            <td class="shipping shippingFee" th:text="${goodsList.goods.shippingFee}"></td>
+            <td class="seller" th:text="${goodsList.goods.item.market.name}"></td>
+          </tr>
+        </table>
+
+        <div id="finalPaymentWrap">
+          <div id="finalPaymentTit">최종 결제 금액</div>
+
+          <div class="price-info-wrap">
+            <div class="price-info-tit">총 상품가격</div>
+            <div class="price-info" id="total-item" th:text="${#numbers.formatInteger(#aggregates.sum(order.goodsList.![price]), 0 , 'COMMA')} + '원'"></div>
+          </div>
+
+          <div class="price-info-wrap">
+            <div class="price-info-tit">배송비</div>
+            <div class="price-info" id="total-shipping"></div>
+          </div>
+
+          <div class="price-info-wrap">
+            <div class="price-info-tit">포인트</div>
+            <div id="pointWrap">
+              <div id="point-input"><input type="number" placeholder="100" id="point" th:field="*{usedPoint}"/></div>
+              <div id="leftover" th:text="'잔여 포인트' + ${#numbers.formatInteger(order.buyer.point, 0, 'COMMA')}"></div>
+            </div>
+          </div>
+
+          <hr class="hr-solid" />
+
+          <div class="price-info-wrap">
+            <input type="hidden" id="total-input" name="totalPrice"/>
+            <div class="price-info-tit">총 결제 금액</div>
+            <div class="price-info" id="total-price" th:text="${#numbers.formatInteger(#aggregates.sum(order.goodsList.![price]) 
+            	+ #aggregates.sum(order.goodsList.![goods?.shippingFee]), 0 , 'COMMA')} + '원'"></div>
+          </div>
+          <div id="paymentBtnWrap">
+            <button id="paymentBtn" type="submit">결제하기</button>
+            <script th:inline="javascript">
+                  var soldout = [[${orderFailed}]];
+                  console.log(soldout);
+                  if(soldout){
+				  			Swal.fire({
+				  			  text: [[${exception}]],
+				  			  icon: "error",
+				  			  confirmButtonColor: '#93c0b5',
+				  			  confirmButtonText: '확인',
+				  			}).then((result) => {
+							  if (result.isConfirmed) { 
+								 location.href="/cart/cartList";
+							  }
+						  	});
+                  }
+				 </script>
+            <button id="cancelBtn" onclick="location.href='/cart/cartList'">취소하기</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-info-tit">주문자 정보</div>
+      <div class="user-info-box" th:object="${order.buyer}">
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">주문하신 분</div>
+          <div class="user-info" th:text="*{name}"></div>
+        </div>
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">주소</div>
+          <div class="user-info" th:text="|*{address} *{addressDetail}|"></div>
+        </div>
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">휴대폰</div>
+          <div class="user-info" th:text="*{#strings.substring(phone, 0, 3) + '-' +
+          #strings.substring(phone, 3, 7) + '-' + #strings.substring(phone, 7)}"></div>
+        </div>
+      </div>
+
+      <div class="user-info-tit">결제 정보</div>
+      <div class="user-info-box">
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">카드사</div>
+          <div class="user-info">
+            <select th:field="*{cardCompany}">
+            <option th:each="cardCompany : ${cardCompanyList}" th:value="${cardCompany}" 
+            	th:text="${cardCompany}"></option>
+            </select>
+            <div th:errors="*{cardCompany}"></div>
+          </div>
+        </div>
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">카드 번호</div>
+          <div class="user-info">
+            <input
+              type="text"
+              placeholder="카드 번호를 입력해주세요."
+              id="cardNum" required maxlength="19" th:field="*{cardNumber}"
+            />
+            <div th:errors="*{cardNumber}" class="user-info-error"></div>
+          </div>
+        </div>
+        <div class="user-info-wrap">
+          <div class="user-info-subtit">유효기간</div>
+          <div class="user-info">
+            <input type="text" placeholder="예) 0922" id="validDate"  th:field="*{expiryDate}" maxlength="4" 
+            	oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required/>
+            <div th:errors="*{expiryDate}" class="user-info-error"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+	</div>
+</html>

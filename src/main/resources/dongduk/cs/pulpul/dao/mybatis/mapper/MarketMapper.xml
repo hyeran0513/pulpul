@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dongduk.cs.pulpul.dao.mybatis.mapper.MarketMapper">
+
+	<!-- 마켓 id로 마켓 정보 조회 -->
+	<resultMap id="marketMap" type="Market">
+		<id column="market_id" jdbcType="INTEGER" property="id" javaType="int" />
+		<result column="name" jdbcType="VARCHAR" property="name" javaType="string" />
+		<result column="intro" jdbcType="VARCHAR" property="intro" javaType="string" />
+		<result column="contactable_time" jdbcType="VARCHAR" property="contactableTime" javaType="string" />
+		<result column="policy" jdbcType="VARCHAR" property="policy" javaType="string" />
+		<result column="precaution" jdbcType="VARCHAR" property="precaution" javaType="string" />
+		<result column="open_status" jdbcType="VARCHAR" property="openStatus" javaType="string" />
+		<association property="member" column="member_id" javaType="Member">
+			<id column="member_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			<result column="address" jdbcType="VARCHAR" property="address" javaType="string" />
+			<result column="email" jdbcType="VARCHAR" property="email" javaType="string" />
+		</association>
+	</resultMap>
+	
+	<select id="selectMarketByMarketId" parameterType="int" resultMap="marketMap">
+	    SELECT market_id, ma.name, intro, contactable_time, policy, precaution, 
+	    	open_status, member_id,
+	    	address, email
+	    FROM market ma
+	    	JOIN member me USING (member_id)
+	    WHERE market_id = #{marketId}
+	</select>
+	
+	<!-- 회원 id로 마켓 정보 조회 -->
+	<select id="selectMarketByMemberId" parameterType="String" resultType="Market">
+    SELECT market_id AS id, name, intro, contactable_time AS contactableTime, policy, precaution, 
+    	open_status AS openStatus, member_id AS "member.id"
+    FROM market
+    WHERE member_id = #{memberId}
+	</select>
+	
+	<!-- 마켓 이미지 조회 -->
+	<select id="selectMarketImage" parameterType="String" resultType="String">
+	    SELECT image_src
+	    FROM image
+	    WHERE member_id = #{memberId} AND category_id = 'MIMG'
+	</select>
+	
+	<!-- 마켓 생성 -->
+	<insert id="insertMarket" parameterType="Market">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">SELECT market_seq.NEXTVAL FROM DUAL</selectKey>
+    INSERT INTO market (market_id, name, intro, contactable_time, policy, precaution, open_status, member_id)
+    VALUES (#{id}, #{name}, #{intro}, #{contactableTime}, #{policy}, #{precaution}, #{openStatus}, #{member.id})
+	</insert>
+	
+	<!-- 마켓 이미지 생성 -->
+	<insert id="insertMarketImage" parameterType="Market">
+    INSERT INTO image (image_src, member_id, category_id)
+    VALUES (#{imageUrl}, #{member.id}, 'MIMG')
+	</insert>
+	
+	<!-- 마켓 정보 수정 -->
+	<update id="updateMarket" parameterType="Market">
+    UPDATE market
+    SET name = #{name}, intro = #{intro}, contactable_time = #{contactableTime}, policy = #{policy}, 
+    	precaution = #{precaution}, open_status = #{openStatus}
+    WHERE market_id = #{id}
+	</update>
+	
+	<!-- 마켓 이미지 삭제 -->
+	<delete id="deleteMarketImage" parameterType="string">
+		DELETE FROM image
+		WHERE member_id = #{memberId} AND category_id = 'MIMG'
+	</delete>
+	
+</mapper>

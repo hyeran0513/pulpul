@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/member/orderDetail.css}" >
+  </th:block>
+  
+  <th:block layout:fragment="script">
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	  	<script th:src="@{/js/member/orderDetail.js}" defer></script>
+	  	<script th:src="@{/js/encodeUri/uri.js}" defer></script>
+	  </th:block>
+
+	<div layout:fragment="content">
+	<!--  <script th:inline="javascript">
+  		console.log('데이터 확인');
+  		var order = [[${order}]];
+  		console.log(order);
+   </script>-->
+	<div id="pageWrap">
+      <div id="pageTit">결제 상세 정보</div>
+      <div id="pageSubTit">Payment info</div>
+
+      <table>
+        <tr>
+          <th class="item-img"></th>
+          <th class="item-info">상품 정보</th>
+          <th class="item-num">수량</th>
+          <th class="seller">판매자</th>
+          <th class="pay-id">결제 ID</th>
+          <th class="pay-date">결제 일자</th>
+          <th class="review"></th>
+        </tr>
+
+        <tr th:each="goodsList : ${order.goodsList}">
+          <td class="item-img-wrap">
+            <img th:src="${goodsList.goods.item.thumbnailUrl}" th:onclick="moveToGoodsDetail([[${goodsList.goods.item.id}]])" class="item-img" />
+          </td>
+          <td class="item-info">
+            <div class="info">
+              <div class="item-name" th:text="${goodsList.goods.item.name}"></div>
+              <div class="item-market" th:text="${goodsList.goods.item.market.name}"></div>
+            </div>
+          </td>
+          <td class="item-num" th:text="${goodsList.quantity}"></td>
+          <td class="seller" th:text="|${order.seller.name}님|"></td>
+          <td class="pay-id" th:text="${order.id}"></td>
+          <td class="pay-date" th:text="${#strings.arraySplit(order.orderDate, ' ')[0]}"></td>
+          <td class="review">
+          	<span th:if="${order.orderStatus == 0}">취소됨</span>
+            <button th:if="${!goodsList.goods.existReview && order.orderStatus == 3}" class="review-btn" th:onclick="moveToGoodsDetail([[${goodsList.goodsId}]])">리뷰 쓰기</button>
+          </td>
+        </tr>
+      </table>
+      
+        <div id="shippingInfoTit">발송지 정보</div>
+      <div id="shippingInfoWrap">
+        <div class="shipping-info-inner">
+          <div class="shipping-info-tit">발송인</div>
+          <div class="shipping-info" th:text="${order.seller.name}"></div>
+        </div>
+        <div class="shipping-info-inner">
+          <div class="shipping-info-tit">휴대폰</div>
+          <div class="shipping-info" th:text="${#strings.substring(order.seller.phone, 0, 3) + '-' + 
+          #strings.substring(order.seller.phone, 3, 7) + '-' + #strings.substring(order.seller.phone, 7)}"></div>
+        </div>
+      </div>
+
+      <div id="shippingInfoTit">배송지 정보</div>
+      <div id="shippingInfoWrap">
+        <div class="shipping-info-inner">
+          <div class="shipping-info-tit">수령인</div>
+          <div class="shipping-info" th:text="${order.buyer.name}"></div>
+        </div>
+        <div class="shipping-info-inner">
+          <div class="shipping-info-tit">휴대폰</div>
+          <div class="shipping-info" th:text="${#strings.substring(order.buyer.phone, 0, 3) + '-' + 
+          #strings.substring(order.buyer.phone, 3, 7) + '-' + #strings.substring(order.buyer.phone, 7)}"></div>
+        </div>
+         <div class="shipping-info-inner">
+          <div class="shipping-info-tit">주소지</div>
+          <div class="shipping-info" th:text="${order.buyer.zip}"></div>
+        </div>
+        <div class="shipping-info-inner">
+          <div class="shipping-info-tit"></div>
+          <div class="shipping-info" th:text="|${order.buyer.address} ${order.buyer.addressDetail}|"></div>
+        </div>
+      </div>
+
+      <div id="payInfoTit">결제 정보</div>
+      <div id="payInfoWrap">
+        <div class="pay-info-inner">
+          <div class="pay-info-tit" >상품 금액</div>
+          <div class="pay-info" id="total-item" th:text="${#numbers.formatInteger(#aggregates.sum(order.goodsList.![price]), 0 , 'COMMA')} + '원'"></div>
+        </div>
+
+        <div class="pay-info-inner">
+          <div class="pay-info-tit">배송비</div>
+          <div class="pay-info" id="total-shippingFee"></div>
+        </div>
+        
+         <div class="pay-info-inner" th:if="${order.usedPoint != 0}">
+          <div class="pay-info-tit">포인트</div>
+          <div class="pay-info" id="point" th:text="|-${#numbers.formatInteger(order.usedPoint, 0, 'COMMA')}원|"></div>
+        </div>
+
+        <div class="final-pay-info">
+          <div class="pay-info-tit">최종 결제 금액</div>
+          <div id="totalPrice" th:text="${#numbers.formatInteger(order.totalPrice, 0 , 'COMMA')} + '원'"></div>
+        </div>
+      </div>
+      
+      <div id="payInfoTit">카드 간편 결제</div>
+      <div id="payInfoWrap">
+        <div class="pay-info-inner">
+        	<div class="pay-info-tit">카드 정보</div>
+        	
+        	<div class="card-info-wrap">
+	          <div class="card-num" th:text="|${order.cardCompany}(${#strings.substring(order.cardNumber, 0, 4) + '-' 
+	           + '****-****-****'})|"></div>
+	          <div class="card-type">일시불</div>
+          </div>
+      	</div>
+    	</div>
+	</div>
+	</div>
+</html>

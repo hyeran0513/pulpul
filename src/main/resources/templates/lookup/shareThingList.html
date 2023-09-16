@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/lookup/shareThingList.css}" >
+  </th:block>
+  
+  <th:block layout:fragment="script">
+    <script th:src="@{/js/lookup/shareThingList.js}" defer></script>
+    <script th:src="@{/js/encodeUri/uri.js}" defer></script>
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+	  		console.log('shareThingList 확인');
+	  		var shareThingList = [[${shareThingList}]];
+	  		console.log(shareThingList);
+  		</script>
+		<div id="pageWrap">
+      <div id="pageTit">관리 용품</div>
+      <div id="pageSubTit">물품 대여에서 관리 용품들을 구경해 보세요.</div>
+
+      <div id="searchWrap">
+        <img src="/images/searchWayBill.svg" />
+        <input
+          type="text"
+          placeholder="관리 용품 이름 및 지역을 검색해 주세요."
+          id="itemSearch"
+        />
+      </div>
+
+      <div id="itemWrap">
+			<div class="item" th:onclick="moveToShareThingDetail([[${shareThing.item.id}]])" th:each="shareThing : ${shareThingList}">
+	        <img th:src="${shareThing.item.thumbnailUrl}" class="item-img-size"/>
+	        
+	        <div class="itemWaitingWrap">
+		      	<div class="item-name"  th:text="${shareThing.item.name}"></div>
+						<div class="waitingWrap">
+		            <img src="/images/waiting.svg" />
+		            <div class="waiting" th:text="${shareThing.reservationNumber}"></div>
+		        </div>
+	        </div>
+					
+					<div class="address" th:text="${shareThing.item.market.member.address}"></div>
+	        
+	        <div class="rental-ok" th:if="${shareThing.isBorrowed} == 0">대여 가능</div>
+	        <div class="rental-notok" th:if="${shareThing.isBorrowed} == 1">대여 불가</div>       
+        </div> 
+      </div>
+    </div>
+	</div>
+</html>

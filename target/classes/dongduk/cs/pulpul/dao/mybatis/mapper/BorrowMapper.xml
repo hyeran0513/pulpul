@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dongduk.cs.pulpul.dao.mybatis.mapper.BorrowMapper">
+	<!--  ====================================================================  -->
+	<!--  알림 관련 질의문  -->
+	<!--  ====================================================================  -->
+	
+	<!-- 알림 생성 -->
+	<insert id="insertAlert" parameterType="Alert">
+    	INSERT INTO alert (share_thing_id, member_id, alert_date, is_read)
+    	VALUES (#{shareThingId}, #{memberId}, SYSDATE, 0)	
+	</insert>
+	
+	<!-- 알림 삭제 -->
+	<delete id="deleteAlert" parameterType="Alert">
+		DELETE FROM alert
+		WHERE share_thing_id = #{shareThingId} AND member_id = #{memberId}
+	</delete>
+	
+	<!-- 알림 조회 -->
+	<select id="selectAlertByMemberId" parameterType="String" resultType="Alert">
+		SELECT share_thing_id AS shareThingId, member_id AS memberId, alert_date AS alertDate, is_read AS isRead
+		FROM alert
+		WHERE member_id = #{memberId}
+		ORDER BY alert_date DESC
+	</select>
+	
+	<!-- 전체 알림 조회 -->
+	<select id="selectAllAlert" resultType="Alert">
+		SELECT share_thing_id AS shareThingId, member_id AS memberId, alert_date AS alertDate, is_read AS isRead
+		FROM alert
+	</select>
+	
+	<!-- 대여 가능일이 지난 예약에 해당하는 알림 조회 -->
+	<select id="selectAlertByAlertDate" resultType="Alert">
+    	SELECT share_thing_id AS shareThingId, member_id AS memberId, alert_date AS alertDate, is_read AS isRead
+   		FROM alert
+    	WHERE alert_date <![CDATA[<]]> SYSDATE - 3
+	</select>
+	
+	<!-- 회원의 읽지 않은 알림 조회 -->
+	<select id="selectAlertCountByIsRead" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+   		FROM alert
+    	WHERE member_id = #{memberId} AND is_read = 0
+	</select>
+	
+	<!-- 알림 읽음 여부 변경 -->
+	<update id="updateIsRead" parameterType="Alert">
+		UPDATE alert
+		SET is_read = 1
+		WHERE share_thing_id = #{shareThingId} AND member_id = #{memberId}
+	</update>
+	
+	<!--  ====================================================================  -->
+	<!--  예약 관련 질의문  -->
+	<!--  ====================================================================  -->
+	
+	<resultMap id="BorrowInfoMap" type="Borrow">
+		<id column="borrow_id" jdbcType="INTEGER" property="id" javaType="int" />
+		<result column="borrow_date" jdbcType="DATE" property="borrowDate" javaType="string" />
+		<result column="return_date" jdbcType="DATE" property="returnDate" javaType="string" />
+		<result column="borrow_status" jdbcType="CHAR" property="borrowStatus" javaType="string" />
+		<result column="is_extended" jdbcType="INTEGER" property="isExtended" javaType="int" />
+		<result column="is_first_booker" jdbcType="INTEGER" property="isFirstBooker" javaType="int" />
+		<association property="lender" column="lender" javaType="Member">
+			<id column="lender_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			<result column="lender_name" jdbcType="VARCHAR" property="name" javaType="string" />
+			<result column="lender_address" jdbcType="VARCHAR" property="address" javaType="string" />
+			<result column="lender_phone" jdbcType="VARCHAR" property="phone" javaType="string" />
+		</association>
+		<association property="borrower" column="borrower" javaType="Member">
+			<id column="borrower_id" jdbcType="VARCHAR" property="id" javaType="string" />
+			<result column="borrower_name" jdbcType="VARCHAR" property="name" javaType="string" />
+			<result column="borrower_address" jdbcType="VARCHAR" property="address" javaType="string" />
+			<result column="borrower_address_detail" jdbcType="VARCHAR" property="addressDetail" javaType="string" />
+			<result column="borrower_zip" jdbcType="VARCHAR" property="zip" javaType="string" />
+			<result column="borrower_phone" jdbcType="VARCHAR" property="phone" javaType="string" />
+		</association>
+		<association property="shareThing" column="share_thing_id" javaType="ShareThing">
+			<result column="precaution" jdbcType="VARCHAR" property="precaution" javaType="string" />
+			<result column="is_borrowed" jdbcType="INTEGER" property="isBorrowed" javaType="int" />
+			<association property="item" column="item_id" javaType="Item">
+				<id column="item_id" jdbcType="VARCHAR" property="id" javaType="string" />
+				<result column="name" jdbcType="VARCHAR" property="name" javaType="string" />
+				<result column="upload_date" jdbcType="DATE" property="uploadDate" javaType="string" />
+				<result column="description" jdbcType="VARCHAR" property="description" javaType="string" />
+				<result column="image_src" jdbcType="VARCHAR" property="thumbnailUrl" javaType="String" />
+				<association property="market" column="market_id" javaType="Market">
+					<id column="market_id" jdbcType="INTEGER" property="id" javaType="int" />
+				</association>
+				<collection column="img_src" property="imageUrlList" javaType="java.util.List" ofType="string" />
+			</association>
+		</association>
+	</resultMap>
+	
+	<!-- 예약 생성 -->
+	<insert id="insertBorrowReservation" parameterType="Borrow">
+    	INSERT INTO borrow_reservation (share_thing_id, member_id, is_first_booker)
+    	VALUES (#{shareThing.item.id}, #{borrower.id}, #{isFirstBooker})	
+	</insert>
+	
+	<!-- 예약 삭제 -->
+	<delete id="deleteBorrowReservation" parameterType="Borrow">
+		DELETE FROM borrow_reservation
+		WHERE share_thing_id = #{shareThing.item.id} AND member_id = #{borrower.id}
+	</delete>
+	
+	<!-- 특정 공유 물품의 예약 조회 -->
+	<select id="selectBorrowReservationByItemId" parameterType="String" resultMap="BorrowInfoMap">
+		SELECT share_thing_id, member_id AS borrower_id, is_first_booker
+		FROM borrow_reservation
+		WHERE share_thing_id = #{itemId}
+	</select>
+	
+	<!-- 첫 번째 예약자의 예약 조회 -->
+	<select id="selectFirstBookersBorrowReservation" parameterType="Borrow" resultMap="BorrowInfoMap">
+		SELECT share_thing_id, member_id AS borrower_id, is_first_booker
+		FROM borrow_reservation
+		WHERE share_thing_id = #{shareThing.item.id} AND is_first_booker = 1
+	</select>
+	
+	<!-- 특정 공유 물품의 예약자 수 조회 -->
+	<select id="selectReservationNumber" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM borrow_reservation
+		WHERE share_thing_id = #{item_id}
+	</select>
+	
+	<!-- 두 번째 예약자를 첫 번째 예약자로 변경 -->
+	<update id="updateIsFirstBooker" parameterType="Borrow">
+		UPDATE borrow_reservation
+		SET is_first_booker = 1
+		WHERE share_thing_id = #{shareThing.item.id}
+	</update>
+	
+	<!--  ====================================================================  -->
+	<!--  대여 관련 질의문  -->
+	<!--  ====================================================================  -->
+	
+	<!-- 특정 회원의 대여 목록 -->
+	<select id="selectBorrowByMemberId" parameterType="String" resultMap="BorrowInfoMap">
+		SELECT b.borrow_id, b.borrow_date, b.return_date, b.borrow_status, b.is_extended, b.lender_id, b.borrower_id, b.share_thing_id,
+				br.is_first_booker,
+				lm.member_id AS lender_id, lm.name AS lender_name, lm.address AS lender_address, lm.phone AS lender_phone,
+				bm.member_id AS borrower_id, bm.name AS borrower_name, bm.address AS borrower_address, 
+				bm.address_detail AS borrower_address_detail, bm.zip AS borrower_zip, bm.phone AS borrower_phone,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow b
+			FULL OUTER JOIN borrow_reservation br ON b.share_thing_id = br.share_thing_id AND b.borrower_id = br.member_id
+			FULL OUTER JOIN member lm ON b.lender_id = lm.member_id
+			FULL OUTER JOIN member bm ON b.borrower_id = bm.member_id
+			FULL OUTER JOIN item it ON b.share_thing_id = it.item_id
+			FULL OUTER JOIN share_thing st ON b.share_thing_id = st.item_id
+            FULL OUTER JOIN market m ON it.market_id = m.market_id
+			FULL OUTER JOIN image i ON lm.member_id = i.member_id
+		<if test='identity eq "borrower"'>
+			WHERE borrower_id = #{memberId} AND INSTR(i.image_src, it.item_id || '-1') <![CDATA[>]]> 0
+		</if>
+		<if test='identity eq "lender"'>
+			WHERE lender_id = #{memberId} AND INSTR(i.image_src, it.item_id || '-1') <![CDATA[>]]> 0
+		</if>
+		ORDER BY image_src ASC
+	</select>
+	
+	<select id="selectCurrBorrowByItem" parameterType="String" resultMap="BorrowInfoMap">
+		SELECT b.borrow_id, b.borrow_date, b.return_date, b.borrow_status, b.is_extended, b.lender_id, b.borrower_id, b.share_thing_id,
+				br.is_first_booker,
+				lm.member_id AS lender_id, lm.name AS lender_name, lm.address AS lender_address, lm.phone AS lender_phone,
+				bm.member_id AS borrower_id, bm.name AS borrower_name, bm.address AS borrower_address, 
+				bm.address_detail AS borrower_address_detail, bm.zip AS borrower_zip, bm.phone AS borrower_phone,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow b
+			FULL OUTER JOIN borrow_reservation br ON b.share_thing_id = br.share_thing_id AND b.borrower_id = br.member_id
+			FULL OUTER JOIN member lm ON b.lender_id = lm.member_id
+			FULL OUTER JOIN member bm ON b.borrower_id = bm.member_id
+			FULL OUTER JOIN item it ON b.share_thing_id = it.item_id
+			FULL OUTER JOIN share_thing st ON b.share_thing_id = st.item_id
+            FULL OUTER JOIN market m ON it.market_id = m.market_id
+			FULL OUTER JOIN image i ON lm.member_id = i.member_id
+		WHERE b.share_thing_id = #{itemId} AND b.borrow_status = 1
+	</select>
+	
+	<select id="selectBorrowById" parameterType="Integer" resultMap="BorrowInfoMap">
+		SELECT b.borrow_id, b.borrow_date, b.return_date, b.borrow_status, b.is_extended, b.lender_id, b.borrower_id, b.share_thing_id,
+				br.is_first_booker,
+				lm.member_id AS lender_id, lm.name AS lender_name, lm.address AS lender_address, lm.phone AS lender_phone,
+				bm.member_id AS borrower_id, bm.name AS borrower_name, bm.address AS borrower_address, 
+				bm.address_detail AS borrower_address_detail, bm.zip AS borrower_zip, bm.phone AS borrower_phone,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow b
+			FULL OUTER JOIN borrow_reservation br ON b.share_thing_id = br.share_thing_id AND b.borrower_id = br.member_id
+			FULL OUTER JOIN member lm ON b.lender_id = lm.member_id
+			FULL OUTER JOIN member bm ON b.borrower_id = bm.member_id
+			FULL OUTER JOIN item it ON b.share_thing_id = it.item_id
+			FULL OUTER JOIN share_thing st ON b.share_thing_id = st.item_id
+            FULL OUTER JOIN market m ON it.market_id = m.market_id
+			FULL OUTER JOIN image i ON lm.member_id = i.member_id
+		WHERE borrow_id = #{borrowId}
+		ORDER BY b.return_date DESC
+	</select>
+	
+	<!-- 특정 회원의 대여 예약 목록 -->
+	<select id="selectBorrowReservationByMemberId" parameterType="String" resultMap="BorrowInfoMap">		
+		SELECT br.share_thing_id, br.member_id AS borrower_id, br.is_first_booker,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow_reservation br
+			JOIN item it ON br.share_thing_id = it.item_id
+			JOIN share_thing st ON br.share_thing_id = st.item_id
+            JOIN market m ON it.market_id = m.market_id
+			JOIN image i ON m.member_id = i.member_id
+		WHERE br.member_id = #{memberId} AND INSTR(i.image_src, it.item_id || '-1') <![CDATA[>]]> 0
+		ORDER BY image_src ASC
+	</select>
+	
+	<!-- 특정 알림의 대여 예약 -->
+	<select id="selectBorrowReservationByAlert" parameterType="Alert" resultMap="BorrowInfoMap">		
+		SELECT br.share_thing_id, br.member_id AS borrower_id, br.is_first_booker,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow_reservation br
+			JOIN item it ON br.share_thing_id = it.item_id
+			JOIN share_thing st ON br.share_thing_id = st.item_id
+            JOIN market m ON it.market_id = m.market_id
+			JOIN image i ON m.member_id = i.member_id
+		WHERE br.member_id = #{memberId} AND br.share_thing_id = #{shareThingId} AND INSTR(i.image_src, it.item_id || '-1') <![CDATA[>]]> 0
+	</select>
+	
+	<!-- 특정 공유물품, 특정 회원의 대여 예약 수 --> 
+	<select id="selectBorrowReservationNumber" parameterType="Borrow" resultType="int">		
+		SELECT COUNT(*)
+		FROM borrow_reservation
+		WHERE member_id = #{borrower.id} AND share_thing_id = #{shareThing.item.id}
+	</select>
+	
+	<!-- 대여 생성 -->
+	<insert id="insertBorrow" parameterType="Borrow">
+    	INSERT INTO borrow (borrow_id, borrow_date, return_date, lender_id, borrower_id, share_thing_id)
+    	VALUES (borrow_seq.NEXTVAL, TO_DATE(#{borrowDate}, 'YYYYMMDD'), TO_DATE(#{returnDate}, 'YYYYMMDD'), #{lender.id}, #{borrower.id}, #{shareThing.item.id})	
+	</insert>
+	
+	<!-- 공유 물품 반납 -->
+	<update id="updateBorrowStatus" parameterType="Borrow">
+		UPDATE borrow
+		SET borrow_status = #{borrowStatus}
+		WHERE borrow_id = #{id}
+	</update>
+	
+	<!-- 대여 연장 -->
+	<update id="updateReturnDate" parameterType="Borrow">
+		UPDATE borrow
+		SET is_extended = 1, return_date = TO_DATE(#{returnDate}, 'YYYYMMDD')
+		WHERE borrow_id = #{id}
+	</update>
+	
+	<!-- 품목 아이디로 대여 내역 조회 -->
+	<select id="selectBorrowByItemId" parameterType="String" resultMap="BorrowInfoMap">
+		SELECT b.borrow_id, b.borrow_date, b.return_date, b.borrow_status, b.is_extended, b.lender_id, b.borrower_id, b.share_thing_id,
+				br.is_first_booker,
+				lm.member_id AS lender_id, lm.name AS lender_name, lm.address AS lender_address, lm.phone AS lender_phone,
+				bm.member_id AS borrower_id, bm.name AS borrower_name, bm.address AS borrower_address, 
+				bm.address_detail AS borrower_address_detail, bm.zip AS borrower_zip, bm.phone AS borrower_phone,
+				it.item_id, it.name, it.upload_date, it.description, it.market_id,
+				st.precaution, st.is_borrowed,
+				i.image_src
+		FROM borrow b
+			FULL OUTER JOIN borrow_reservation br ON b.share_thing_id = br.share_thing_id AND b.borrower_id = br.member_id
+			FULL OUTER JOIN member lm ON b.lender_id = lm.member_id
+			FULL OUTER JOIN member bm ON b.borrower_id = bm.member_id
+			FULL OUTER JOIN item it ON b.share_thing_id = it.item_id
+			FULL OUTER JOIN share_thing st ON b.share_thing_id = st.item_id
+            FULL OUTER JOIN market m ON it.market_id = m.market_id
+			FULL OUTER JOIN image i ON lm.member_id = i.member_id
+		WHERE b.share_thing_id = #{itemId} AND INSTR(i.image_src, it.item_id || '-1') <![CDATA[>]]> 0
+	</select>
+</mapper>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/lookup/goodsList.css}" >
+  </th:block>
+  
+  <th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" defer></script>
+  	<script th:src="@{/js/lookup/goodsList.js}" defer></script>
+  	<script th:src="@{/js/encodeUri/uri.js}" defer></script>
+  </th:block>
+  	
+	<div layout:fragment="content">
+	<!-- 	<script th:inline="javascript">
+  		console.log('데이터 확인');
+  		var goodsList = [[${goodsList}]];
+  		console.log(goodsList);
+  	</script> -->
+  	
+  	<div id="pageWrap">
+      <div id="pageTit">반려 식물</div>
+			<div id="pageSubTit">식물 조회에서 반려 식물들을 구경해 보세요.</div>
+      
+      <div id="searchWrap">
+        <img src="/images/searchWayBill.svg" />
+        <input
+          type="text"
+          placeholder="태그명, 식물 이름을 검색해 주세요."
+          id="itemSearch" class="filterText" value=""
+        />
+      </div>
+      
+      <div class="tag">
+        <div class="search-tag">다육이</div>
+        <div class="search-tag">관엽이</div>
+        <div class="search-tag">공기정화</div>
+        <div class="search-tag">동양란</div>
+        <div class="search-tag">서양란</div>
+        <div class="search-tag">야생화</div>
+      </div>
+
+      <div id="itemWrap" th:if="${#lists.isEmpty(goodsList)}">
+      	<div id="noItem">판매 상품이 없습니다.</div>
+      </div>
+     
+      <div id="itemWrap" th:if="${not #lists.isEmpty(goodsList)}">
+      	<div class="item" th:onclick="moveToGoodsDetail([[${goods.item.id}]])" th:each="goods : ${goodsList}">
+        	<div  class="item-img-size" th:if="${goods.remainQuantity == 0}">
+         		<img  class="soldout-img" th:src="${goods.item.thumbnailUrl}"/>  
+         	</div>
+          <div class="item-img-size" th:unless="${goods.remainQuantity == 0}">
+            <img class="item-img" th:src="${goods.item.thumbnailUrl}"/>           
+          </div>
+          
+          <div class="item-name-wrap">
+	        	<div class="item-name" th:text="${goods.item.name}"></div>
+	        
+	          <div th:if="${goods.remainQuantity == 0}" class="remain-div">
+	            <span class="soldout">품절</span>
+	          </div>
+          </div>
+          
+          <div class="item-price" th:text="|${#numbers.formatInteger(goods.price, 0, 'COMMA')}원|"></div>
+          <div class="item-tags">
+           <div class="item-tag" th:each="tag : ${#strings.arraySplit(goods.tags, ',')}">
+            <span class="tag-name" th:text="|#${tag}|"></span>
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   </div>
+</html>

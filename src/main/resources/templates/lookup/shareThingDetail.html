@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/lookup/shareThingDetail.css}" >
+  	<link rel="stylesheet" th:href="@{/css/swiper-bundle.min.css}" >
+  </th:block>
+  
+   <th:block layout:fragment="script">
+  	<script th:src="@{/js/swiper-bundle.min.js}" defer></script>
+  	<script th:src="@{/js/lookup/shareThingDetail.js}" defer></script>
+  	<script th:src="@{/js/encodeUri/uri.js}" defer></script>
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+			console.log('borrow 확인');
+		  var borrow = [[${borrow}]];
+		  console.log(borrow);
+		  console.log('sessID 확인');
+		  var sess = [[${session.id}]];
+		  console.log(sess);
+	  </script>
+	  
+	  <form action="/borrow/borrow" method="post" th:object="${borrow}">
+	  	<div id="pageWrap">
+	  		<th:block  th:if="${borrow.shareThing.isBorrowed} == 0 or (${borrow.shareThing.isBorrowed} == 1 and ${borrow.isFirstBooker} == 1)">
+	  			<div id="infoCover">
+		  			<div class="swiper-container mySwiper">
+				      <div class="swiper-wrapper">
+				        <div class="swiper-slide" th:each="img : ${borrow.shareThing.item.imageUrlList}">
+				          <img th:src="${img}" class="item-img"/>
+				        </div>
+				      </div>
+				      <div class="swiper-button-next"></div>
+				      <div class="swiper-button-prev"></div>
+				      <div class="swiper-pagination"></div>
+				    </div>
+				    
+				    <div id="info">
+				    	<input type="hidden" name="shareThing.item.id" th:value="${borrow.shareThing.item.id}"/>
+				    	
+				    	<div id="itemNameWrap">
+		          	<div id="itemName" th:text=${borrow.shareThing.item.name}></div>
+		          	<div class="waitingWrap">
+		            	<img src="/images/waiting.svg" />
+		            	<div class="waiting" th:text="${borrow.shareThing.reservationNumber}"></div>
+		          	</div>
+	          	</div>
+	          	
+	          	<div class="address" th:text="${borrow.shareThing.item.market.member.address}"></div>
+	          	
+	          	<hr class="hr-dotted" />
+	          
+	          	<div id="itemInfo" th:text=${borrow.shareThing.item.description}></div>
+	          	
+	          	<table>
+	          		<tr>
+	              	<td>대여 상태</td>
+	              	<td><div id="rentalOk">대여 가능</div></td>
+	            	</tr>
+	            	
+	            	<tr>
+	              	<td>대여 시 유의사항</td>
+	              	<td class="precaution-wrap"><th:block th:text="${borrow.shareThing.precaution}"></th:block></td>
+	            	</tr>
+	            	
+	            	<tr>
+	              	<td>대여 기간</td>
+	              	<td>
+		              	<input type="text" placeholder="1" id="shipping" name="date"/> 일 
+	              	</td>
+	            	</tr>
+	          	</table>
+	          	
+	          	<input type="hidden" name="isFirstBooker" th:value="${borrow.isFirstBooker}" />
+	          	<input type="hidden" name="lender.id" th:value="${borrow.shareThing.item.market.member.id}" />
+	          	
+	          	<div class="invalid-feedback" th:errors="*"> </div>
+	          	
+	          	<div id="btnWrap">
+	          		<button id="rentalBtn" type="button" th:if="${session.id} == ${borrow.shareThing.item.market.member.id}" th:onclick="updateShareThing([[${borrow.shareThing.item.id}]])">수정하기</button>
+	          		<button id="rentalBtn" type="submit" th:unless="${session.id} == ${borrow.shareThing.item.market.member.id}" onclick="location.href='/mypage/shareThingList'">대여하기</button>
+	            	<button id="cancelBtn" type="button" onclick="location.href='/lookup/shareThingList'">목록으로 이동</button>
+	          	</div>
+	          	
+	          	<a th:href="@{/lookup/market(marketId=${borrow.shareThing.item.market.id})}" id="marketLink">
+            		<img src="/images/smallShopIcon.svg" />
+            		<span th:text="|${borrow.shareThing.item.market.name} 마켓으로 이동하기|"></span>
+	          	</a>
+				    </div>
+	  			</div>
+	  		</th:block>
+	  	</div>
+	  </form>
+	  
+	  <form action="/borrow/reservation" method="post" th:object="${borrow}">
+	  	<th:block  th:if="${borrow.shareThing.isBorrowed} == 1 and ${borrow.isFirstBooker} != 1">
+	  		<div id="infoCover">
+	  			<div class="swiper-container mySwiper">
+				  	<div class="swiper-wrapper">
+				    	<div class="swiper-slide" th:each="img : ${borrow.shareThing.item.imageUrlList}">
+				      	<img th:src="${img}" class="item-img"/>
+				     	</div>
+				   	</div>
+					  <div class="swiper-button-next"></div>
+						<div class="swiper-button-prev"></div>
+					  <div class="swiper-pagination"></div>
+				  </div>    
+			    
+			    <div id="info">
+			    	<input type="hidden" name="shareThing.item.id" th:value="${borrow.shareThing.item.id}"/>
+			    	
+			    	<div id="itemNameWrap">
+		          <div id="itemName" th:text=${borrow.shareThing.item.name}></div>
+		          <div class="waitingWrap">
+		            <img src="/images/waiting.svg" />
+		            <div class="waiting" th:text="${borrow.shareThing.reservationNumber}"></div>
+		          </div>
+	          </div>
+  
+	          <div class="address" th:text="${borrow.shareThing.item.market.member.address}"></div>
+	          
+	          <hr class="hr-dotted" />
+	          
+	          <div id="itemInfo" th:text=${borrow.shareThing.item.description}></div>
+	          
+	          <table>
+	          		<tr>
+	              	<td>대여 상태</td>
+	              	<td><div id="rentalNotOk">대여 불가</div></td>
+	            	</tr>
+	            	
+	            	<tr>
+	              	<td>대여 시 유의사항</td>
+	              	<td class="precaution-wrap"><th:block th:text="${borrow.shareThing.precaution}"></th:block></td>
+	            	</tr>
+	          	</table>
+	          	
+	          	<input type="hidden" name="lender.id" th:value="${borrow.shareThing.item.market.member.id}" />
+	          	
+	          	<div id="btnWrap">
+	          		<th:block th:if="${borrow.borrower} == null">
+	          			<button id="rezBtn" type="submit" th:if="${borrow.shareThing.isBorrowed} == 1 and ${session.id} != ${borrow.shareThing.item.market.member.id}" onclick=clickRezBtn(); >예약하기</button>
+	          		</th:block>
+	          		<th:block th:unless="${borrow.borrower} == null">
+	          			<button id="rentalBtn" type="button" th:if="${borrow.borrowStatus} != null and ${session.id} == ${borrow.borrower.id} and ${borrow.isExtended} != 1" onclick="location.href='/member/myPage'">연장하기</button> 	 
+	          			<button id="rezBtn" type="submit" th:if="${borrow.shareThing.isBorrowed} == 1 and ${session.id} != ${borrow.borrower.id} and ${session.id} != ${borrow.shareThing.item.market.member.id}" onclick=clickRezBtn(); >예약하기</button>
+	          		</th:block>
+	          		<button id="rentalBtn" type="button" th:if="${session.id} == ${borrow.shareThing.item.market.member.id}" th:onclick="updateShareThing([[${borrow.shareThing.item.id}]])">수정하기</button> 		
+	            	<button id="cancelBtn" type="button" onclick="location.href='/lookup/shareThingList'">목록으로 이동</button>
+	          	</div>
+	          	
+	          	<script th:inline="javascript">
+		    	  var failed = [[${reservationFailed}]];
+				  		if(failed == true){
+				  			Swal.fire({
+				  			  title: "예약 불가!",
+				  			  text: "이미 대여 예약한 공유물품입니다.",
+				  			  icon: "error",
+				  			  confirmButtonColor: '#93c0b5',
+				  			  confirmButtonText: '확인',
+				  			});
+				  		}  	
+				  </script>
+	          	
+	          	<a th:href="@{/lookup/market(marketId=${borrow.shareThing.item.market.id})}" id="marketLink">
+            		<img src="/images/smallShopIcon.svg" />
+            		<span th:text="|${borrow.shareThing.item.market.name} 마켓으로 이동하기|"></span>
+	          	</a>
+			    </div>
+	  		</div>
+	  	</th:block>
+	  </form>
+  </div>
+</html>

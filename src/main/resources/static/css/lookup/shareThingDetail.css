@@ -1,0 +1,180 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#infoCover {
+  display: flex;
+  justify-content: space-between;
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#itemImg {
+  width: 596px;
+  height: 398px;
+  object-fit: contain;
+}
+
+#info {
+  width: 518px;
+}
+
+#itemNameWrap {
+	display: flex;
+	align-items: center;
+}
+
+.waitingWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  font-size: 14px;
+  color: #c09693;
+}
+
+#itemName {
+  font-size: 24px;
+  font-weight: medium;
+}
+
+.address {
+	margin: 4px 0px 20px 0px;
+	color: #535353;
+}
+
+.hr-dotted {
+	margin-bottom: 20px;
+	border: 1px dotted #EAEAEA;
+}
+
+#itemInfo {
+  margin-bottom: 40px;
+  font-size: 14px;
+  color: #333333;
+}
+
+#rentalOk {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 24px;
+  font-size: 14px;
+  border: 1px solid #463B37;
+  border-radius: 5px;
+  background-color: #463B37;
+  color: white;
+}
+
+#rentalNotOk {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 24px;
+  font-size: 14px;
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  background-color: #c4c4c4;
+  color: white;
+}
+
+.precaution-wrap {
+ 	width: 400px;
+}
+
+td {
+  width: 200px;
+  height: 50px;
+  font-size: 14px;
+}
+
+#shipping {
+  width: 80px;
+  height: 24px;
+  border-radius: 5px;
+  border: 1px solid #c4c4c4;
+  text-align: center;
+}
+
+#btnWrap {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+#rentalBtn,
+#rezBtn {
+  width: 240px;
+  height: 50px;
+  background-color: #93c0b5;
+  color: white;
+  border: 1px solid #93c0b5;
+  cursor: pointer;
+}
+
+#notRentalBtn {
+	width: 240px;
+  height: 50px;
+  background-color: #c4c4c4;
+  color: white;
+  border: 1px solid #c4c4c4;
+  cursor: pointer;
+}
+
+#cancelBtn {
+  width: 240px;
+  height: 50px;
+  background-color: white;
+  border: 1px solid #535353;
+  color: #535353;
+  cursor: pointer;
+}
+
+#marketLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  font-size: 12px;
+  color: #9493c0;
+  cursor: pointer;
+}
+
+/* swiper */
+
+.swiper-container {
+  width: 596px;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.swiper-slide img {
+  display: block;
+ 	width: 596px;
+ 	height: 398px;
+  object-fit: contain;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+	display: none;
+}
+
+.invalid-feedback {
+	margin-top: 40px;
+	color: #DBAFAE;
+}
+
+.item-img {
+	object-fit: contain;
+}

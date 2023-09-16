@@ -1,0 +1,183 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#pageTit {
+  margin: 80px 0px 10px 0px;
+  font-size: 24px;
+  color: #6f6f6f;
+  text-align: center;
+}
+
+#pageSubTit {
+  font-size: 14px;
+  color: #c4c4c4;
+  text-align: center;
+}
+
+table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid #93c0b5;
+}
+
+th {
+  height: 48px;
+  text-align: center;
+  border-top: 1px solid black;
+  border-bottom: 1px solid #eaeaea;
+}
+
+td {
+  height: 60px;
+}
+
+.market-name {
+	margin-top: 60px;
+	font-size: 14px;
+	color: #c4c4c4;	
+}
+
+.check-box {
+  width: 20px;
+  text-align: center;
+}
+
+.thumbnail-item {
+	margin-left: 15px;
+	width: 50px;
+	height: 50px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.thumbnail-item-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	cursor: pointer;
+}
+
+.soldout, .close{
+	width: 100%;
+	height: 100%;
+	object-fit: contain;	
+	background-color: #535353;
+ 	opacity: 0.3;
+ 	cursor: pointer
+}
+
+.item-info {
+  width: 514px;
+  text-align: center;
+}
+
+.item-num {
+  width: 140px;
+  text-align: center;
+}
+
+.price {
+  width: 180px;
+  text-align: center;
+}
+
+.shipping {
+  width: 180px;
+  text-align: center;
+}
+
+.btn-wrap {
+  width: 160px;
+  text-align: center;
+}
+
+.cancel-btn {
+  width: 80px;
+  height: 40px;
+  color: #c09693;
+  background-color: white;
+  border: 1px solid #c09693;
+  cursor: pointer;
+}
+
+.total-price-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 40px;
+  margin: 80px 0px;
+  padding-right: 40px;
+  width: 1154px;
+  height: 120px;
+  background-color: #f9f9f9;
+}
+
+.total-price-tit {
+  font-size: 18px;
+}
+
+.total-price {
+  display:inline-block;
+  font-size: 22px;
+  color: #93c0b5;
+  width: 70px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.total-shipping, .total-price-item {
+	display:inline-block;
+	width: 60px;
+	text-align: right;
+}
+
+.bottom-btn-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.continue-shopping,
+.check-item-order,
+.all-item-delete {
+  width: 140px;
+  height: 40px;
+  background-color: #eaeaea;
+  color: #535353;
+  border: 1px solid #eaeaea;
+  cursor: pointer;
+}
+
+.noCartItem {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 50vh;
+	flex-direction: column;
+}
+
+.noCartItemTit {
+	margin-bottom: 8px;
+	color: #535353;
+	font-size: 18px;
+}
+
+.noCartItemSubTit {
+	color: #c4c4c4;
+	font-size: 14px;
+}
+
+.goto-shopping {
+	margin-top: 40px;
+	width: 200px;
+  height: 40px;
+  background-color: #eaeaea;
+  color: #535353;
+  border: 1px solid #eaeaea;
+  cursor: pointer;
+  border-radius: 5px;
+}

@@ -1,0 +1,179 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#pageTit {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+#pageSubTit {
+	margin-bottom: 60px;
+	font-size: 14px;
+	color: #c4c4c4;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid #eaeaea;
+}
+
+td {
+  padding: 10px 0px;
+}
+
+tr {
+  border-bottom: 1px solid #eaeaea;
+}
+
+input {
+  padding: 0px 20px;
+  width: 952px;
+  height: 30px;
+  border: 1px solid #eaeaea;
+  font-size: 14px;
+}
+
+.text-name {
+  padding-left: 20px;
+  width: 170px;
+  font-size: 14px;
+  color: #676767;
+}
+
+#fileWrap {
+  padding: 0px;
+  border: none;
+}
+
+textarea {
+  padding: 20px;
+  width: 954px;
+  height: 54px;
+  border: 1px solid #eaeaea;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+label {
+  display: block;
+  cursor: pointer;
+}
+
+label span {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px 10px 10px;
+  border-radius: 50px;
+  transition: 0.25s ease;
+  font-size: 14px;
+}
+
+label span:before {
+  content: "";
+  background-color: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: 0.25s ease;
+  box-shadow: inset 0 0 0 2px #93c0b5;
+}
+
+input[type="radio"]:checked + span:before {
+  box-shadow: inset 0 0 0 10px #93c0b5;
+}
+
+#btnWrap {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 60px;
+	gap: 20px;
+	width: 100%;
+}
+
+#cancelBtn {
+	margin-right: -2px;
+	width: 100px;
+	height: 34px;
+	border-radius: 5px;
+	border: 1px solid #AAAAAA;
+	color: #AAAAAA;
+	cursor: pointer;
+	background-color: white;
+}
+
+#saveBtn {
+	width: 100px;
+	height: 34px;
+	border-radius: 5px;
+	background-color: #AAAAAA;
+	border: 1px solid #AAAAAA;
+	color: white;
+	cursor: pointer;
+}
+
+/*占싱뱄옙占쏙옙 占쏙옙占싸뤄옙 占쏙옙占쏙옙*/
+#putItemImg{
+	display:flex;
+}
+
+.putItemImgSpan{
+	margin: 0px 10px;
+	position:relative;
+}
+
+/*img deleteBtn css*/
+.deleteBtn{
+
+	border-radius:20%;
+	color: red;
+	border: 0;
+	outline: 0;
+	width: 15px;
+	height: 15px;
+	position: absolute;
+	right: -0.5px;
+	top: -2px;
+	font-size: 18px;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+/* shareThingForm */
+.shareThingFormBtn button {
+	margin-right: 5px;
+}
+
+.shareThingFormBtn {
+	width: 100%;
+	justify-content: flex-end;
+}
+
+/* form radio */
+.radio {
+	display:flex;
+}
+
+/* input file put img */
+.putFilenameSpan, .updateImage{
+	font-size: 14px;
+	margin-right: 5px;
+}
+
+.invalid-feedback {
+	margin-top: 3px;
+	color: #DF5375;
+	font-size: 12px;
+}
+

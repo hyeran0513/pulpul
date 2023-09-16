@@ -1,0 +1,183 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#pageTit {
+  margin-top: 80px;
+  font-size: 32px;
+  color: #6f6f6f;
+  text-align: center;
+}
+
+#pageSubTit {
+  margin: 8px 0px 60px 0px;
+  font-size: 14px;
+  color: #c4c4c4;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-top: 1px solid #eaeaea;
+  border-collapse: collapse;
+}
+
+th {
+	height: 44px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid #eaeaea;
+}
+
+td {
+  border-bottom: 1px solid #eaeaea;
+  padding: 10px;
+}
+
+.item-img-wrap {
+  width: 70px;
+  text-align: center;
+}
+
+.item-img {
+  width: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.item-info {
+  width: 280px;
+  text-align: center;
+}
+
+.item-num {
+  width: 140px;
+  text-align: center;
+}
+
+.seller {
+  width: 180px;
+  text-align: center;
+}
+
+.pay-id {
+  width: 180px;
+  text-align: center;
+}
+
+.pay-date {
+  width: 174px;
+  text-align: center;
+}
+
+.review {
+  width: 140px;
+  text-align: center;
+}
+
+.info-image {
+  width: 60px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-name {
+  font-size: 14px;
+}
+
+.item-market {
+  font-size: 12px;
+  color: #c4c4c4;
+}
+
+.review-btn {
+  width: 100px;
+  height: 40px;
+  border: 1px solid #93c0b5;
+  color: #93c0b5;
+  background-color: white;
+  cursor: pointer;
+}
+
+#shippingInfoTit,
+#payInfoTit {
+  margin: 60px 0px;
+  font-size: 18px;
+  font-weight: medium;
+}
+
+#shippingInfoWrap,
+#payInfoWrap {
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.shipping-info-inner,
+.pay-info-inner {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.card-info-inner {
+	display: flex;
+  align-items: center;
+  width: 200px;
+  height: 40px;
+  background-color: pink;
+}
+
+.shipping-info-tit,
+.pay-info-tit {
+  padding-left: 20px;
+  width: 140px;
+  font-size: 14px;
+}
+
+.final-pay-info {
+	display: flex;
+  align-items: center;
+  height: 40px;
+  border-top: 1px dotted #EAEAEA;
+}
+
+.card-info-wrap {
+	display: flex;
+	gap: 40px;
+  height: 40px;
+}
+
+.card-num,
+.card-type {
+	display: flex;
+  align-items: center;
+  height: 40px;
+  border-top: 1px dotted #EAEAEA;
+}
+
+.card-type {
+	color: #C4C4C4;
+}
+
+.shipping-info,
+.pay-info {
+  font-size: 14px;
+  color: #c4c4c4;
+}
+
+#totalPrice {
+  font-size: 14px;
+  color: #93c0b5;
+}
+
+.pay-info, #totalPrice {
+	width: 70px;
+	display:flex;
+	justify-content: flex-end;
+}

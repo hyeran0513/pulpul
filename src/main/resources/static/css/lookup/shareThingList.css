@@ -1,0 +1,116 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#pageTit {
+  font-size: 24px;
+  font-weight: medium;
+}
+
+#pageSubTit {
+	margin: 12px 0px 20px 0px;
+	font-size: 14px;
+	color: #c4c4c4;
+}
+
+#searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 60px 0px 100px 0px;
+  padding-left: 20px;
+  width: 1174px;
+  height: 80px;
+  border-bottom: 1px solid #463B37;
+}
+
+#itemSearch {
+  width: 1004px;
+  font-size: 18px;
+  border: none;
+}
+
+.item {
+	height: 400px;
+}
+
+.item:hover {
+  transform: scale(1.1);
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.item-img-size {
+	width: 270px;
+	height: 270px;
+	background-color: #F1F1F1;	
+	object-fit: cover;
+  border-radius: 5px;
+}
+
+#itemWrap {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 38px;
+  margin-bottom: 100px;
+  width: 1194px;
+}
+
+.itemWaitingWrap {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	margin: 20px 0px 6px 0px;
+	height: 24px;
+}
+
+.item-name {
+  font-size: 18px;
+  text-align: center;
+}
+
+.waitingWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #c09693;
+}
+
+.address {
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: #535353;
+}
+
+.rental-ok {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 24px;
+  font-size: 14px;
+  border: 1px solid #463B37;
+  border-radius: 5px;
+  background-color: #463B37;
+  color: white;
+}
+
+.rental-notok {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 24px;
+  font-size: 14px;
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  background-color: #c4c4c4;
+  color: white;
+}
+
+input:focus {
+	outline: none;
+}

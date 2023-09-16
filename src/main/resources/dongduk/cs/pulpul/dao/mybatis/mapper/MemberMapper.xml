@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dongduk.cs.pulpul.dao.mybatis.mapper.MemberMapper">
+	<!-- 회원 가입 -->
+	<insert id="insertMember" parameterType="Member">
+		INSERT INTO MEMBER (member_id, password, name, birth, address, address_detail, zip,
+						phone, email, point) 
+		VALUES (#{id}, #{password}, #{name}, TO_DATE(#{birth}, 'YYYYMMDD'), #{address}, #{addressDetail},
+				#{zip}, #{phone}, #{email}, #{point}) 
+	</insert>
+	
+	<!-- 회원 id로 회원 정보 수정 -->
+	<update id="updateMember" parameterType="Member">
+		UPDATE member
+		SET password = #{password}, name = #{name}, birth = #{birth}, address = #{address},
+				address_detail = #{addressDetail}, zip = #{zip}, phone = #{phone}, 
+				email = #{email}
+		WHERE member_id = #{id}
+	</update>
+	
+	<!-- 회원 탈퇴(id, pw 전달) 참조 테이블도 다 삭제!-->
+	<delete id="deleteMember" parameterType="Member">
+		DELETE FROM member
+		WHERE member_id = #{id} AND password = #{password}
+	</delete>
+	
+	<!-- 회원 id로 회원 정보 조회, 
+	로그인할 때 회원정보 확인하는 함수(id 세션에 저장) -->
+	<select id="selectMemberById" parameterType="String" resultType="Member">
+		SELECT member_id AS id, password, name, birth, address, address_detail AS addressDetail, 
+			zip, phone, email, point
+		FROM member
+		WHERE member_id = #{memberId}
+	</select>
+	
+	<!-- 포인트 +- (회원 id, 변동 포인트 값, +인지 -인지 확인하는 값 전달) -->
+	<update id="updatePoint">
+		UPDATE member
+	 	<set>
+			<if test="status eq 1">
+				point = point + #{point}
+			</if>
+			<if test="status eq -1">
+				point = point - #{point}
+			</if>
+		</set>
+		WHERE member_id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/lookup/alert.css}" >
+  </th:block>
+  
+  <th:block layout:fragment="script">
+  	<script th:src="@{/js/lookup/alert.js}"></script>
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+  		console.log('alertList 확인');
+  		var alertList = [[${alertList}]];
+  		console.log(alertList);
+  	</script>
+		<div id="alertHeader">
+      <div id="alertTit">알림</div>
+      <img src="/images/alertClose.svg" onclick="window.close()" />
+    </div>
+	
+		<th:block th:each="alert : ${alertList}">
+			<div id="alertBox" th:if=${alert.isRead}>
+				<div id="alertBtnWrap">
+		        <div id="alertType">공유물품 대여 가능 알림</div>
+		        
+		        <script th:inline="javascript"> 
+		        	var pageUrl = [[${alert.pageUrl}]];
+		        	console.log(pageUrl);
+		        	
+		        	flag = 1; 
+		        	function newwin() { 
+		        		if (flag == 1) { 
+		        			open(pageUrl, "_blank"); 
+		        			self.close(); 
+		        			parent.close();
+		        		} 
+		        	} 
+		        </script>
+
+		        <div class="link" onclick="newwin()">바로가기</div>
+		      </div>
+		      <div id="alertContent">예약하신 공유물품이 대여 가능 상태가 되었습니다.<br/> 3일 내로 대여 신청하시지 않으면 자동으로 대여 예약이 취소됩니다.</div>
+		      <div id="alertDate"  th:text=${alert.alertDate}></div>
+			</div>
+			<div id="newAlertBox" th:unless=${alert.isRead}>
+			  <div id="alertBtnWrap">
+		        <div id="alertType">공유물품 대여 가능 알림</div>
+		        
+		        <script th:inline="javascript"> 
+		        	var pageUrl = [[${alert.pageUrl}]];
+		        	console.log(pageUrl);
+		        	
+		        	flag = 1; 
+		        	function newwin() { 
+		        		if (flag == 1) { 
+		        			open(pageUrl, "_blank"); 
+		        			self.close(); 
+		        			parent.close();
+		        		} 
+		        	} 
+		        </script>
+		        
+		        <div class="link" onclick="newwin()">바로가기</div>
+		      </div>
+		      <div id="alertContent">예약하신 공유물품이 대여 가능 상태가 되었습니다.<br/> 3일 내로 대여 신청하시지 않으면 자동으로 대여 예약이 취소됩니다.</div>
+		      <div id="alertDate"  th:text=${alert.alertDate}></div>
+			</div>
+		</th:block>
+	</div>
+</html>

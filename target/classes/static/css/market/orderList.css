@@ -1,0 +1,208 @@
+#pageWrap {
+  margin: 80px auto;
+  width: 1194px;
+}
+
+#pageTit {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+#pageSubTit {
+	margin-bottom: 60px;
+	font-size: 14px;
+	color: #c4c4c4;
+}
+
+#menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 60px 0px;
+  width: 1174px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.list-on {
+  color: #93c0b5;
+  cursor: pointer;
+}
+
+.list:hover {
+  color: #93c0b5;
+  cursor: pointer;
+}
+
+#searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 60px;
+  padding-left: 20px;
+  width: 1174px;
+  height: 50px;
+  border-bottom: 1px solid #463B37;
+  transition: border-bottom 0.4s ease-in-out;
+}
+
+#searchWrap:hover {
+	border-bottom: 1px solid #93c0b5;
+}
+
+.search-img {
+	cursor: pointer;
+}
+
+#wayBill {
+  width: 1004px;
+  font-size: 18px;
+  border: none;
+  padding: 10px 0px 10px 20px;
+}
+
+#wayBill::placeholder {
+	color: #c4c4c4;
+}
+
+#wayBill:focus {
+	outline-color:#93c0b5;
+}
+
+#wayBill:focus::placeholder {
+	color: rgba(0, 0, 0, 0);
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid #463B37;
+}
+
+tr:first-child {
+  border-bottom: 1px solid #eaeaea;
+}
+
+th {
+	padding: 10px;
+	height: 30px;
+  background-color: #FAFAFA;
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
+}
+
+td {
+  padding: 20px 0px;
+  text-align: center;
+}
+
+.deleteBtn {
+  width: 80px;
+  height: 40px;
+  border: 1px solid #c09693;
+  color: #c09693;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.order-num {
+  width: 234px;
+}
+
+.order-date {
+  width: 230px;
+}
+
+.order-price {
+  width: 200px;
+}
+
+.order-status {
+  width: 200px;
+}
+
+.order-waybill {
+  width: 330px;
+}
+
+#wayBillBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#perWayBill {
+  width: 220px;
+  height: 24px;
+  border: 1px solid #c4c4c4;
+  background-color: white;
+}
+
+#wayBillBtn {
+  width: 50px;
+  height: 28px;
+  border: 1px solid #93c0b5;
+  background-color: white;
+  cursor: pointer;
+}
+
+.order-num-hover:hover {
+	color: #93c0b5;
+}
+
+#totalPriceWrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 60px;
+  padding-right: 40px;
+  width: 1194px;
+  height: 120px;
+  background-color: #f9f9f9;
+}
+
+#totalPriceInner {
+  display: flex;
+  gap: 20px;
+}
+
+#totalPriceTit {
+  font-size: 18px;
+}
+
+#totalPrice {
+  font-size: 18px;
+  color: #93c0b5;
+}
+
+#btnWrap {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+#returnBtn,
+#purchaseStatusBtn {
+  width: 140px;
+  height: 40px;
+  border: 1px solid #434343;
+  background-color: white;
+  color: #434343;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+#previousBtn, #nextBtn {
+  display: block;
+  margin: 40px auto 40px auto;
+  	width: 200px;
+	height: 40px;
+  border: 1px solid #c4c4c4;
+  background-color: white;
+  color: #535353;
+  cursor: pointer;
+  border-radius: 10px;
+} 

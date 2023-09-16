@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+  layout:decorate="~{layout/default_layout}">
+  
+  <th:block layout:fragment="css">
+    <link th:href="@{/css/fragments/header.css}" rel="stylesheet" />
+	  <link th:href="@{/css/fragments/footer.css}" rel="stylesheet" />
+  	<link rel="stylesheet" th:href="@{/css/market/marketForm.css}" >
+  </th:block>
+  
+  	<th:block layout:fragment="script">
+  	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  	<script th:src="@{/js/market/marketForm.js}" defer></script>
+  	<script src="https://kit.fontawesome.com/6478f529f2.js"
+    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  </th:block>
+
+	<div layout:fragment="content">
+		<script th:inline="javascript">
+  		console.log('데이터 확인');
+  		var market = [[${market}]];
+  		console.log(market);
+  	</script>
+		<div id="pageWrap">
+		  <div id="pageTit">마켓 관리</div>
+		  <div id="pageSubTit">마켓 정보</div>
+		  
+		  <div id="menu" th:if=${market.id}>
+		    <div><a href="/market/view" class="list-on">마켓 정보</a></div>
+		    <div>|</div>
+		    <div><a href="/market/goods/list" class="list">상품 관리</a></div>
+		    <div>|</div>
+		    <div><a href="/market/shareThing/list" class="list">공유 물품 관리</a></div>
+		  </div>
+		  <div id="menu" th:unless=${market.id}>
+		    <div><a href="/market/view" class="list-on">마켓 등록</a></div>
+		  </div>
+		  
+		  <form th:object="${market}" method="post" enctype="multipart/form-data"> 
+		    <input type="hidden" th:field="*{id}">
+		  <table>
+		    <tr>
+		      <td class="text-name">마켓명</td>
+		      <td>
+		      	<input type="text" placeholder="마켓명을 입력하세요." th:field="*{name}" />
+		      	<div class="invalid-feedback" th:errors="*{name}"></div>
+		      </td>
+		    </tr>
+		 
+		    <tr>
+		      <td class="text-name">마켓 소개</td>
+		      <td>
+		      	<textarea placeholder="마켓 소개를 작성해주세요." th:field="*{intro}"></textarea>
+		      	<div class="invalid-feedback" th:errors="*{intro}"></div>
+		      </td>
+		    </tr>
+		    <tr id="isMarketImage">
+		      <td class="text-name">마켓 사진</td>
+					<td>
+					 <div id="imgBox">
+			          <input class="upload" type="file" id="fileWrap" accept=".jpg" multiple="multiple" name="file" style="display:none;">
+			          <input type="hidden" th:field="*{imageUrl}" />
+				       <div class="upload-img-icon-box"><i class="fas fa-camera fa-2x"></i></div>
+				       <div class="upload-img" th:if="${not #strings.isEmpty(market.imageUrl)}">
+				       	<img class="market-upload-image" th:src="*{imageUrl}">
+				       	<button class="deleteBtn" type="button" onclick="deleteImg(event)">X</button>
+				       </div>
+				        <div class="upload-img" th:if="${#strings.isEmpty(market.imageUrl)}">
+				        </div>
+           			 </div>
+					</td>
+		  	</tr>
+		    
+		    <tr>
+		      <td class="text-name">연락 가능 시간</td>
+		      <td>
+		      	<input type="text" placeholder="예) 오후 1:00 ~ 오후 3:00" th:field="*{contactableTime}"  />
+		      	<div class="invalid-feedback" th:errors="*{contactableTime}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">교환/반품/환불 정책</td>
+		      <td>
+		        <input type="text" placeholder="교환/반품/환불 정책을 입력해주세요." th:field="*{policy}" />
+		        <div class="invalid-feedback" th:errors="*{policy}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">구매 전 유의사항</td>
+		      <td>
+		        <input type="text" placeholder="구매 전 유의사항을 입력해주세요." th:field="*{precaution}" />
+		        <div class="invalid-feedback" th:erros="*{precaution}"></div>
+		      </td>
+		    </tr>
+		    <tr>
+		      <td class="text-name">마켓 공개</td>
+		      <td>
+		        <div class="radio">
+		          <label>
+		            <input th:attr="checked=*{openStatus.toString() == '1' ? 'true' : 'false'}" type="radio" id="dark" name="openStatus" value="1" />
+		            <span>공개</span>
+		           </label>
+		           <label>
+		            <input th:attr="checked=*{openStatus.toString() == '0'? 'true' : 'false'}" type="radio" id="light" name="openStatus" value="0"/>
+		            <span>비공개</span>
+		          </label>
+		        </div>
+		      </td>
+		    </tr>
+		  </table>
+		   <div id="btnWrap" class="marketBtn">
+		    <button th:if="*{id == 0}" onclick="javascript: form.action='/market/create';" id="saveBtn">저장</button>
+		    <button th:unless="*{id == 0}" id="saveBtn" onclick="javascript: form.action='/market/update';">수정</button>
+		  </div>
+		  </form>
+		</div>
+	</div>
+</html>
