@@ -14,5 +14,5 @@
 - 구세현: 백엔드
 
 
-### 미리보기
-![image](https://github.com/hyeran0513/pitapet/assets/69576326/62c9f861-c4e3-45f8-b155-63ac2062c0bb)
+### 시연영상
+https://www.youtube.com/watch?v=7UsOZKcKio4&t=1s
